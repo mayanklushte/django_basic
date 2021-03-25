@@ -1,5 +1,6 @@
 from django import forms
 from .models import *
+from django.contrib.auth.models import User
 
 
 class DemoForm(forms.ModelForm):
@@ -14,3 +15,18 @@ class DemoForm(forms.ModelForm):
         model = Demo
         fields = '__all__'
         exclude = ('status', )
+
+
+class UserForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput())
+
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email', 'password']
+
+
+class UserRegisterForm(forms.ModelForm):
+    class Meta:
+        model = UserRegister
+        fields = '__all__'
+        exclude = ('user',)
