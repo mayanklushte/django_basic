@@ -3,19 +3,27 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
-
-
+from django.views.generic import ListView
+from .models import *
+from django.contrib.auth.models import User
 from .forms import *
 # Create your views here.
 
 
 def index(request):
-    data = Demo.objects.all()
+    data = Demo.objects.filter(user__user_id=request.user)
+
     return render(request, 'index.html', {'data': data})
 
 
-def contact(request):
-    return HttpResponse("contact us")
+def details(request, id):
+    data = Demo.objects.get(id=id)
+    return render(request, 'contact.html', {'data': data})
+
+
+def delete(request, id):
+    data = Demo.objects.get(id=id).delete()
+    return HttpResponseRedirect(reverse('demoapp:index'))
 
 
 def add_demo(request):
@@ -73,3 +81,10 @@ def user_login(request):
             return HttpResponseRedirect(reverse('demoapp:login'))
     else:
         return render(request, 'login.html')
+
+
+class DemoList(ListView):
+    model = Demo
+    template_name = 'class_list.html'
+    context_object_name = 'data'
+
