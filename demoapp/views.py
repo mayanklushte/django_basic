@@ -88,3 +88,13 @@ class DemoList(ListView):
     template_name = 'class_list.html'
     context_object_name = 'data'
 
+
+def update_demo(request, id):
+    instance = Demo.objects.get(id=id)
+    form = DemoForm(request.POST or None, request.FILES or None, instance=instance)
+    if form.is_valid():
+        form.save()
+        return HttpResponseRedirect(reverse('demoapp:index'))
+    else:
+        print(form.errors)
+    return render(request, 'update_demo.html', {'form': form})
