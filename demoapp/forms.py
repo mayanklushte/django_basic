@@ -29,4 +29,11 @@ class UserRegisterForm(forms.ModelForm):
     class Meta:
         model = UserRegister
         fields = '__all__'
-        exclude = ('user',)
+        exclude = ('user', 'is_customer')
+
+
+class ShopRegisterForm(forms.ModelForm):
+    class Meta:
+        model = ShopRegister
+        fields = '__all__'
+        exclude = ('user', 'is_shop')

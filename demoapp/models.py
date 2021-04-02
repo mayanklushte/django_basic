@@ -11,6 +11,20 @@ class UserRegister(models.Model):
     mobile_no = models.CharField(max_length=10, validators=[RegexValidator(r'^\d{10}$')])
     Address = models.CharField(max_length=200)
     profile_pic = models.ImageField(upload_to='profile_pic')
+    is_customer = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user.first_name
+
+
+class ShopRegister(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    mobile_no = models.CharField(max_length=10, validators=[RegexValidator(r'^\d{10}$')])
+    Address = models.CharField(max_length=200)
+    profile_pic = models.ImageField(upload_to='profile_pic')
+    shop_name = models.CharField(max_length=120)
+    is_shop = models.BooleanField(default=False)
 
     def __str__(self):
         return self.user.first_name

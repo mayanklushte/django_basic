@@ -52,6 +52,7 @@ def register_user(request):
 
             form_r = form_p.save(commit=False)
             form_r.user = user  # here connected OneToOneField with user table
+            form_r.is_customer = True
             form_r.save()
             return HttpResponseRedirect(reverse('demoapp:index'))
 
@@ -64,6 +65,30 @@ def register_user(request):
     return render(request, 'user_register.html', {'form': form, 'form_p': form_p})
 
 
+def register_shop(request):
+    if request.method == 'POST':
+        form = UserForm(request.POST)
+        form_p = ShopRegisterForm(request.POST, request.FILES)
+        if form.is_valid() and form_p.is_valid():
+            user = form.save()
+            user.set_password(user.password)
+            user.save()
+
+            form_r = form_p.save(commit=False)
+            form_r.user = user  # here connected OneToOneField with user table
+            form_r.is_shop = True
+            form_r.save()
+            return HttpResponseRedirect(reverse('demoapp:index'))
+
+        else:
+            print(form_p.errors, form.errors)
+    else:
+        form = UserForm()
+        form_p = ShopRegisterForm()
+
+    return render(request, 'shop_register.html', {'form': form, 'form_p': form_p})
+
+
 def user_login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -72,8 +97,16 @@ def user_login(request):
         user = authenticate(username=username, password=password)
         if user:
             if user.is_active:
-                login(request, user)
-                return HttpResponseRedirect(reverse('demoapp:index'))
+                try:
+                    data = UserRegister.objects.get(user_id=user)
+                    if data.is_customer == True:
+                        login(request, user)
+                        return HttpResponseRedirect(reverse('demoapp:index'))
+                except:
+                    data2 = ShopRegister.objects.get(user_id=user)
+                    if data2.is_shop == True:
+                        login(request, user)
+                        return HttpResponseRedirect(reverse('demoapp:add_demo'))
             else:
                 print('user is not active')
         else:
